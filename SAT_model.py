@@ -33,10 +33,12 @@ class SAT:
         self.vars = np.ones(self.var_num+1, dtype=int)
         negs = np.random.choice(self.var_num, size=np.random.random_integers(
             self.var_num), replace=False)
-        self.vars[negs] = -1
+        self.vars[negs+1] = -1
 
-    def calc_sat(self) -> int:
-        tmp = np.dot(self.vars.reshape(1, -1), self.clauses)
+    def calc_sat(self, variables: np.ndarray = None) -> int:
+        if not variables:
+            variables = self.vars
+        tmp = np.dot(variables.reshape(1, -1), self.clauses)
         tmp += self.clause_var_num.reshape(1, -1)
 
         self.sat_clauses_num = 0
@@ -45,3 +47,11 @@ class SAT:
             self.sat_clauses_num += (element != 0)
 
         return self.sat_clauses_num
+
+    def neighbors(self) -> np.ndarray:
+        ngb = np.ndarray((self.var_num+1, self.var_num+1), dtype=int)
+        ngb[0] = self.vars
+        for i in range(1, self.var_num+1):
+            ngb[i] = self.vars
+            ngb[i][i] *= -1
+        return ngb
