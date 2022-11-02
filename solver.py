@@ -1,3 +1,5 @@
+from pathlib import Path
+from os import listdir
 import numpy as np
 from SAT_model import SAT
 
@@ -14,6 +16,8 @@ def stochastic_hill_climbing(model: SAT, max_iterations=1000, verbose=False, plo
     probs = np.zeros(model.var_num+1, dtype=float)
     current_sat = model.calc_sat()
     best_so_far = return_dict(model)
+    if verbose:
+        log_str = ''
 
     for _ in range(max_iterations):
         if current_sat == model.clause_num:
@@ -25,7 +29,7 @@ def stochastic_hill_climbing(model: SAT, max_iterations=1000, verbose=False, plo
             probs[i] = model.calc_sat(neighbor)
 
         if verbose:
-            print(f'Neighbors: {list(map(int, probs))}, ', end='')
+            log_str += f'Neighbors: {list(map(int, probs))}, '
 
         probs /= np.sum(probs)
         chose_neighbor = np.random.choice(
@@ -38,10 +42,12 @@ def stochastic_hill_climbing(model: SAT, max_iterations=1000, verbose=False, plo
             best_so_far = return_dict(model)
 
         if verbose:
-            print(f'SAT: {current_sat}')
+            log_str += f'SAT: {current_sat}\n'
 
     if verbose:
-        print('\n')
+        Path('logs').mkdir(parents=True, exist_ok=True)
+        with open(Path(f'logs/log{len(listdir("logs"))}.log'), 'w') as log:
+            log.write(log_str)
 
     if plot:
         pass
