@@ -1,6 +1,7 @@
 from pathlib import Path
 from os import listdir
 import numpy as np
+import matplotlib.pyplot as plt
 from SAT_model import SAT
 
 
@@ -12,12 +13,16 @@ def return_dict(model: SAT) -> dict:
     }
 
 
-def stochastic_hill_climbing(model: SAT, max_iterations=1000, verbose=False, plot=False) -> dict:
+def stochastic_hill_climbing(model: SAT, max_iterations=10000, verbose=False, plot=False) -> dict:
     probs = np.zeros(model.var_num+1, dtype=float)
     current_sat = model.calc_sat()
     best_so_far = return_dict(model)
+
     if verbose:
         log_str = ''
+
+    if plot:
+        history = []
 
     for _ in range(max_iterations):
         if current_sat == model.clause_num:
@@ -44,12 +49,19 @@ def stochastic_hill_climbing(model: SAT, max_iterations=1000, verbose=False, plo
         if verbose:
             log_str += f'SAT: {current_sat}\n'
 
+        if plot:
+            history.append(current_sat)
+
     if verbose:
         Path('logs').mkdir(parents=True, exist_ok=True)
         with open(Path(f'logs/log{len(listdir("logs"))}.log'), 'w') as log:
             log.write(log_str)
 
     if plot:
-        pass
+        plt.figure(figsize=(10, 6))
+        plt.plot(range(max_iterations), history, c='red', linewidth=0.5)
+        plt.xlabel('Iteration')
+        plt.ylabel('SAT Clauses')
+        plt.show()
 
     return best_so_far
