@@ -2,7 +2,7 @@ from pathlib import Path
 from os import listdir
 import numpy as np
 import matplotlib.pyplot as plt
-from SAT_model import SAT
+from src.SAT_model import SAT
 
 
 def return_dict(model: SAT) -> dict:
@@ -127,6 +127,8 @@ def simulated_annealing(model: SAT, start_temp=10, stop_temp=0.01,
     if plot:
         plt.figure(figsize=(10, 6))
         plt.plot(temp_history, sat_history, c='red', linewidth=0.5)
+        plt.axis([max(temp_history), min(temp_history),
+                 min(sat_history), max(sat_history)])
         plt.xlabel('Temperature')
         plt.ylabel('SAT Clauses')
         plt.show()
