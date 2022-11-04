@@ -35,7 +35,7 @@ class SAT:
             self.var_num), replace=False)
         self.vars[negs+1] = -1
 
-    def calc_sat(self, variables: np.ndarray = None) -> int:
+    def fitness(self, variables: np.ndarray = None) -> int:
         if variables is None:
             variables = self.vars
         tmp = np.dot(variables.reshape(1, -1), self.clauses)
